@@ -84,10 +84,21 @@ client.connect(err => {
   app.post('/addProducts', (req, res) => {
     const products = req.body;
     console.log(req.body );
-    productCollection.insertMany(products,(err,result)=>{
+    productCollection.insertOne(products,(err,result)=>{
       res.send({count: result}); 
     })
   })
+
+  app.delete("/deleteProducts/:id", (req, res) => {
+    const id = ObjectId(req.params.id);
+    console.log("delete this", id);
+    productCollection.deleteOne({ _id: id })
+      .then(result =>{
+        res.send(result.deletedCount > 0);
+      })
+  });
+
+
 
 
 
