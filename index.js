@@ -12,15 +12,14 @@ app.use(cors());
 app.use(express.json());
 
 
-app.get('/', (req,res)=>{
-  res.send("hello from db it's working")
-}
+
 
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.uhcor.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
+  console.log(err);
   const productCollection = client.db("shoes").collection("products");
   const createCollection = client.db("shoes").collection("createProduct");
 
