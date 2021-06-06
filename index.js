@@ -91,10 +91,11 @@ client.connect(err => {
   })
 
   app.delete("/deleteProducts/:id", (req, res) => {
-    const id = ObjectId(req.params.id);
+    const id = req.params.id;
     console.log("delete this", id);
-    productCollection.deleteOne({ _id: id })
+    productCollection.deleteOne({ _id: id})
       .then(result =>{
+        console.log(result.deletedCount);
         res.send(result.deletedCount > 0);
       })
   });
