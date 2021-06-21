@@ -21,7 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   console.log(err);
   const productCollection = client.db("shoes").collection("products");
-  const createCollection = client.db("shoes").collection("createProduct");
+  const orderCollection = client.db("shoes").collection("orderProduct");
 
   app.get("/products", (req, res) => {
     productCollection.find({})
@@ -35,22 +35,21 @@ client.connect(err => {
     const id =req.params.id
     productCollection.find({_id: ObjectId(id)})
       .toArray((err, document) => {
-        res.send(document[0]);
+        res.send(document[0]); 
       })
 
   })
-
-  app.post('/addCreate', (req, res) => {
-    const create = req.body;
-    console.log(req.body );
-    createCollection.insertOne(create,(err,result)=>{
-      res.send({count: result.insertedCount}); 
-    })
-  })
+    // order collection
+    app.post("/addCreate", (req, res) => {
+      const order = req.body;
+      ordersCollection.insertOne(order).then((result) => {
+        res.send(result.insertedCount > 0);
+      });
+    });
 
   app.get("/checkOut", (req, res) => {
     const id =req.params.id
-    createCollection.find({})
+    orderCollection.find({})
       .toArray((err, document) => {
         res.send(document[0]);
       })
@@ -60,11 +59,11 @@ client.connect(err => {
   app.get("/checkOut/:email", (req, res) => {
     const email = req.params.email;
     const id =req.params.id
-    createCollection.find({email:email })
+    orderCollection.find({email:email })
       .toArray((err, document) => {
         res.send(document[0]);
       })
-
+         // order collection
   })
 
   app.post('/addProduct', (req, res) => {
@@ -75,6 +74,12 @@ client.connect(err => {
   })
 
 
+  app.post("/addOrder", (req, res) => {
+    const order = req.body;
+    ordersCollection.insertOne(order).then((result) => {
+      res.send(result.insertedCount > 0);
+    });
+  });
 
 
 
@@ -84,9 +89,11 @@ client.connect(err => {
 
   app.post('/addProducts', (req, res) => {
     const products = req.body;
-    console.log(req.body );
-    productCollection.insertOne(products,(err,result)=>{
-      res.send({count: result}); 
+
+    console.log(products);
+    productCollection.insertOne(products) 
+    .then(result =>{
+      res.send(result); 
     })
   })
 
